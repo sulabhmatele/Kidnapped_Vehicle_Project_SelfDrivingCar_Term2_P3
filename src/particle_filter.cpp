@@ -43,12 +43,46 @@ void ParticleFilter::init(double x, double y, double theta, double std[])
     }
 }
 
-void ParticleFilter::prediction(double delta_t, double std_pos[], double velocity, double yaw_rate) {
-	// TODO: Add measurements to each particle and add random Gaussian noise.
-	// NOTE: When adding noise you may find std::normal_distribution and std::default_random_engine useful.
-	//  http://en.cppreference.com/w/cpp/numeric/random/normal_distribution
-	//  http://www.cplusplus.com/reference/random/default_random_engine/
+void ParticleFilter::prediction(double delta_t, double std_pos[], double velocity, double yaw_rate)
+{
+    // TODO: Add measurements to each particle and add random Gaussian noise.
+    // NOTE: When adding noise you may find std::normal_distribution and std::default_random_engine useful.
+    //  http://en.cppreference.com/w/cpp/numeric/random/normal_distribution
+    //  http://www.cplusplus.com/reference/random/default_random_engine/
 
+    default_random_engine gen;
+
+    for (int i = 0; i < num_particles; ++i)
+    {
+        double eff_yaw = yaw_rate * delta_t;
+        double norm = 0;
+        double eq_x = 0;
+        double eq_y = 0;
+
+        if (0 != yaw_rate)
+        {
+            norm = (velocity / yaw_rate);
+            eq_x = norm * (sin(particles[i].theta + eff_yaw) - sin(particles[i].theta));
+            eq_y = norm * (cos(particles[i].theta) - cos(particles[i].theta + eff_yaw));
+        }
+        else
+        {
+            eq_x = velocity * cos(particles[i].theta) * delta_t;
+            eq_y = velocity * sin(particles[i].theta) * delta_t;
+        }
+
+        particles[i].x += eq_x;
+        particles[i].y += eq_y;
+        particles[i].theta += eff_yaw;
+
+        normal_distribution<double> dist_x(particles[i].x, std_pos[0]);
+        normal_distribution<double> dist_y(particles[i].y, std_pos[1]);
+        normal_distribution<double> dist_theta(particles[i].theta, std_pos[2]);
+
+        //angle normalization
+        while (particles[i].theta> M_PI) particles[i].theta-=2.*M_PI;
+        while (particles[i].theta<-M_PI) particles[i].theta+=2.*M_PI;
+    }
 }
 
 void ParticleFilter::dataAssociation(std::vector<LandmarkObs> predicted, std::vector<LandmarkObs>& observations) {
