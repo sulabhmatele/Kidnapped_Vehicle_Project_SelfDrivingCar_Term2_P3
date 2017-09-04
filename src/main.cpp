@@ -14,8 +14,8 @@ using json = nlohmann::json;
 // else the empty string "" will be returned.
 std::string hasData(std::string s) {
   auto found_null = s.find("null");
-  auto b1 = s.find_first_of("[");
-  auto b2 = s.find_first_of("]");
+  auto b1 = s.find_first_of('[');
+  auto b2 = s.find_first_of(']');
   if (found_null != std::string::npos) {
     return "";
   }
