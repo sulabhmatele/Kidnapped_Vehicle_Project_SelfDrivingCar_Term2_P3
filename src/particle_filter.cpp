@@ -133,8 +133,6 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 	//   3.33
 	//   http://planning.cs.uiuc.edu/node99.html
 
-    std::vector<double> particles_wList; // Used for normalizing weights
-
     for(auto &single_part : particles)
     {
         /* Collect all the map landmarks in range from each particle */
@@ -196,19 +194,19 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
         }
 
         single_part.weight = weight;
-        particles_wList.push_back(single_part.weight);
+        weights.push_back(single_part.weight);
     }
 
-    /* Normalizing weights to 0 - 1, we need to use them as probability in rsampling step */
+    /* Normalizing weights to 0 - 1, we need to use them as probability in resampling step */
 
-    double min_weight = *std::min_element( std::begin(particles_wList), std::end(particles_wList) );
-    double max_weight = *std::max_element( std::begin(particles_wList), std::end(particles_wList) );
+/*    double min_weight = *std::min_element( std::begin(weights), std::end(weights) );
+    double max_weight = *std::max_element( std::begin(weights), std::end(weights) );
     double diff_wt = (max_weight - min_weight);
 
     for(auto &single_part : particles)
     {
         single_part.weight = (single_part.weight - min_weight)/ diff_wt;
-    }
+    }*/
 }
 
 void ParticleFilter::resample()
@@ -219,9 +217,13 @@ void ParticleFilter::resample()
 
     std::random_device rd;
     std::mt19937 gen(rd());
-    std::discrete_distribution<> d({0,1});
 
+    std::discrete_distribution<> d(weights.begin(), weights.end());
 
+    for(auto &single_part : particles)
+    {
+        single_part.weight = d(gen);
+    }
 }
 
 Particle ParticleFilter::SetAssociations(Particle particle, std::vector<int> associations, std::vector<double> sense_x, std::vector<double> sense_y)
