@@ -34,6 +34,18 @@ struct ground_truth {
 };
 
 /*
+ * Struct representing one Updated landmark observation measurement with nearest landmark data.
+ */
+struct UpdLandmarkObs {
+
+	int id;				// Id of matching landmark in the map.
+	double xl;          // x coordinate of nearest landmark
+	double yl;          // y coordinate of nearest landmark
+	double x;			// Local (vehicle coordinates) x position of landmark observation [m]
+	double y;			// Local (vehicle coordinates) y position of landmark observation [m]
+};
+
+/*
  * Struct representing one landmark observation measurement.
  */
 struct LandmarkObs {
