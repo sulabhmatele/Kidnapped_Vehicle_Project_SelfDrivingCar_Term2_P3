@@ -1,13 +1,13 @@
 # Kidnapped_Vehicle_Project_SelfDrivingCar_Term2_P3
-This repo contains the submissions and related material for Udacity "Self Driving Car" Nano degree program's Term 2 - Project 3, "Kidnapped_Vehicle_Project"
+This repo contains the submissions and related material for Udacity "Self Driving Car" Nano degree program's Term 2 - Project 3, "Kidnapped_Vehicle_Project":
 
-![alt text](https://github.com/sulabhmatele/Kidnapped_Vehicle_Project_SelfDrivingCar_Term2_P3/image/success.png)
+![alt text](https://github.com/sulabhmatele/Kidnapped_Vehicle_Project_SelfDrivingCar_Term2_P3/blob/master/image/success.png)
 
 
 ## Project Introduction
 This robot(car) has been kidnapped and transported to a new location! Luckily it has a map of this location, a (noisy) GPS estimate of its initial location, and lots of (noisy) sensor and control data.
 
-In this project I have implemented a 2 dimensional particle filter in C++. Your particle filter will be given a map and some initial localization information (analogous to what a GPS would provide). At each time step your filter will also get observation and control data. 
+In this project I have implemented a 2 dimensional particle filter in C++. The particle filter will be given a map and some initial localization information (analogous to what a GPS would provide). At each time step your filter will also get observation and control data. 
 
 ## Running the Code
 This project involves the Term 2 Simulator which can be downloaded [here](https://github.com/udacity/self-driving-car-sim/releases)
