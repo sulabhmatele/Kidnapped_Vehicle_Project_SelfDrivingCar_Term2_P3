@@ -22,7 +22,7 @@ using namespace std;
 
 void ParticleFilter::init(double x, double y, double theta, double std[])
 {
-    num_particles = 2;
+    num_particles = 20;
 
     default_random_engine gen;
 
@@ -78,9 +78,9 @@ void ParticleFilter::prediction(double delta_t, double std_pos[], double velocit
         particles[i].y += eq_y;
         particles[i].theta += eff_yaw;
 
-        normal_distribution<double> dist_x(particles[i].x, std_pos[0]);
-        normal_distribution<double> dist_y(particles[i].y, std_pos[1]);
-        normal_distribution<double> dist_theta(particles[i].theta, std_pos[2]);
+        normal_distribution<double> dist_x(0, std_pos[0]);
+        normal_distribution<double> dist_y(0, std_pos[1]);
+        normal_distribution<double> dist_theta(0, std_pos[2]);
 
         particles[i].x += dist_x(gen);
         particles[i].y += dist_y(gen);
@@ -135,6 +135,7 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 {
     cout << " ______________ updateWeight start____________________" << endl;
 
+    weights.clear();
     for(auto &single_part : particles)
     {
         /* Collect all the map landmarks in range from each particle */
@@ -209,17 +210,23 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 
         SetAssociations(single_part, associations, sense_x, sense_y);
 
-        single_part.weight = weight;
+        if (trans_obs.size() == 0)
+        {
+            single_part.weight = 0;
+        }
+        else
+        {
+            single_part.weight = weight;
+        }
+
+        weights.push_back(single_part.weight);
+        predicted.clear();
 
         cout<< "wParticle id: " <<  single_part.id << " x , y , theta : "
             << single_part.x <<" , " << single_part.y <<" , " << single_part.theta
             << " , weight : " << single_part.weight << endl;
     }
 
-    for (int i = 0; i < particles.size() ; ++i)
-    {
-        weights[i] = particles[i].weight;
-    }
 
     cout << " ______________ updateWeight start____________________" << endl;
 
@@ -239,6 +246,7 @@ void ParticleFilter::resample()
     }
     //assign the particles from holder to the original
     particles = new_particles;
+    weights.clear();
 }
 
 Particle ParticleFilter::SetAssociations(Particle particle, std::vector<int> associations, std::vector<double> sense_x, std::vector<double> sense_y)
