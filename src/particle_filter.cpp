@@ -22,7 +22,7 @@ using namespace std;
 
 void ParticleFilter::init(double x, double y, double theta, double std[])
 {
-    num_particles = 20;
+    num_particles = 42;
 
     default_random_engine gen;
 
@@ -30,7 +30,7 @@ void ParticleFilter::init(double x, double y, double theta, double std[])
     normal_distribution<double> dist_y(y, std[1]);
     normal_distribution<double> dist_theta(theta, std[2]);
 
-    cout << " ______________ Init start____________________" << endl;
+ //   cout << " ______________ Init start____________________" << endl;
     for (int i = 0; i < num_particles; ++i)
     {
         struct Particle part = {0};
@@ -43,9 +43,9 @@ void ParticleFilter::init(double x, double y, double theta, double std[])
         particles.push_back(part);
         weights.push_back(1.0);
 
-        cout << " x =" << part.x  << ", y = " << part.y << " , theta = " << part.theta << endl;
+  //      cout << " x =" << part.x  << ", y = " << part.y << " , theta = " << part.theta << endl;
     }
-    cout << " ______________ Init end____________________" << endl;
+ //   cout << " ______________ Init end____________________" << endl;
 
     is_initialized = true;
 }
@@ -54,7 +54,7 @@ void ParticleFilter::prediction(double delta_t, double std_pos[], double velocit
 {
     default_random_engine gen;
 
-    cout << " ______________ Prediction start____________________" << endl;
+ //   cout << " ______________ Prediction start____________________" << endl;
     for (int i = 0; i < num_particles; ++i)
     {
         double eff_yaw = yaw_rate * delta_t;
@@ -85,11 +85,12 @@ void ParticleFilter::prediction(double delta_t, double std_pos[], double velocit
         particles[i].x += dist_x(gen);
         particles[i].y += dist_y(gen);
         particles[i].theta += dist_theta(gen);
+        particles[i].id = i;
 
-        cout<< "Particle id: " <<  particles[i].id << " x , y , theta : "
-            << particles[i].x <<" , " << particles[i].y <<" , " << particles[i].theta << endl;
+/*        cout<< "Particle id: " <<  particles[i].id << " x , y , theta : "
+            << particles[i].x <<" , " << particles[i].y <<" , " << particles[i].theta << endl;*/
     }
-    cout << " ______________ Prediction end____________________" << endl;
+//    cout << " ______________ Prediction end____________________" << endl;
 }
 
 void ParticleFilter::dataAssociation(std::vector<LandmarkObs> predicted, std::vector<UpdLandmarkObs> &observations)
@@ -97,7 +98,7 @@ void ParticleFilter::dataAssociation(std::vector<LandmarkObs> predicted, std::ve
     double shortest = 100; // Just random big number
     bool found = false;
 
-    cout << " ______________ dataAssociation start____________________" << endl;
+//    cout << " ______________ dataAssociation start____________________" << endl;
     for (auto &observation : observations)
     {
         for (auto &landmark : predicted)
@@ -127,13 +128,13 @@ void ParticleFilter::dataAssociation(std::vector<LandmarkObs> predicted, std::ve
             << observation.x <<" , " << observation.y <<" , " << " Landmark xl , yl : "
             << observation.xl <<" , " << observation.yl << endl;*/
     }
-    cout << " ______________ dataAssociation end____________________" << endl;
+ //   cout << " ______________ dataAssociation end____________________" << endl;
 }
 
 void ParticleFilter::updateWeights(double sensor_range, double std_landmark[], 
 		std::vector<LandmarkObs> observations, Map map_landmarks)
 {
-    cout << " ______________ updateWeight start____________________" << endl;
+ //   cout << " ______________ updateWeight start____________________" << endl;
 
     weights.clear();
     for(auto &single_part : particles)
@@ -208,10 +209,15 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
             sense_y.push_back(single_obs.yl);
         }
 
+        single_part.associations= associations;
+        single_part.sense_x = sense_x;
+        single_part.sense_y = sense_y;
+
         SetAssociations(single_part, associations, sense_x, sense_y);
 
         if (trans_obs.size() == 0)
         {
+            cout << " Observation 0 +++++";
             single_part.weight = 0;
         }
         else
@@ -222,13 +228,13 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
         weights.push_back(single_part.weight);
         predicted.clear();
 
-        cout<< "wParticle id: " <<  single_part.id << " x , y , theta : "
+/*        cout<< "wParticle id: " <<  single_part.id << " x , y , theta : "
             << single_part.x <<" , " << single_part.y <<" , " << single_part.theta
-            << " , weight : " << single_part.weight << endl;
+            << " , weight : " << single_part.weight << endl;*/
     }
 
 
-    cout << " ______________ updateWeight start____________________" << endl;
+//    cout << " ______________ updateWeight start____________________" << endl;
 
 }
 
